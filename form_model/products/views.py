@@ -9,10 +9,11 @@ class ProductListClass(View):
         context = {'products': Product.getall()}
         return render(request, 'product/list.html', context)
 
+
 class ProductDeleteClass(View):
     def get(self, request, id):
-        Product.objects.filter(id=id).softdelete()
-        return Product.go_to_Products_List()
+        Product.softdelete(id)  # Call on class, passing the id
+        return redirect('product_list')
 
 class ProductUpdate(View):
     def get(self, request, id):
@@ -68,18 +69,46 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Product
 from .forms import ProductForm
 
+# def product_update_form(request, id):
+#     product = get_object_or_404(Product, id=id)
+#
+#     if request.method == 'POST':
+#         form = ProductForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             product.name = form.cleaned_data['name']
+#             product.price = form.cleaned_data['price']
+#             if form.cleaned_data.get('image'):
+#                 product.image = form.cleaned_data['image']
+#             product.description = form.cleaned_data['description']
+#             product.category = form.cleaned_data['category']
+#             product.save()
+#             return redirect('product_list')
+#     else:
+#         form = ProductForm(initial={
+#             'name': product.name,
+#             'price': product.price,
+#             'description': product.description,
+#             'category': product.category,
+#         })
+#
+#     return render(request, 'product/updateform.html', {'form': form})
+
 def product_update_form(request, id):
     product = get_object_or_404(Product, id=id)
 
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
+            # Get the Category instance first
+            category_id = form.cleaned_data['category']
+            category = Category.objects.get(pk=category_id)
+
             product.name = form.cleaned_data['name']
             product.price = form.cleaned_data['price']
             if form.cleaned_data.get('image'):
                 product.image = form.cleaned_data['image']
             product.description = form.cleaned_data['description']
-            product.category = form.cleaned_data['category']
+            product.category = category  # Assign the Category instance
             product.save()
             return redirect('product_list')
     else:
@@ -87,12 +116,10 @@ def product_update_form(request, id):
             'name': product.name,
             'price': product.price,
             'description': product.description,
-            'category': product.category,
+            'category': product.category.id,  # Pass the ID for initial data
         })
 
     return render(request, 'product/updateform.html', {'form': form})
-
-
 
 
 def product_list(request):

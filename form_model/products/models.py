@@ -41,7 +41,7 @@ class Product(models.Model):
 
     @classmethod
     def getall(cls):
-        return cls.objects.all()
+        return cls.objects.filter(status=True)
 
     @classmethod
     def get_by_id(cls, id):
@@ -64,6 +64,10 @@ class Product(models.Model):
     def go_to_Products_List():
         return redirect('product_list')
 
-    def softdelete(self):
-        self.status = False
-        self.save()
+    @classmethod
+    def softdelete(cls, id):
+        cls.objects.filter(pk=id).update(status=False)
+
+    # def softdelete(self):
+    #     self.status = False
+    #     self.save()
