@@ -11,7 +11,7 @@ class ProductListClass(View):
 
 class ProductDeleteClass(View):
     def get(self, request, id):
-        Product.objects.filter(id=id).delete()
+        Product.objects.filter(id=id).softdelete()
         return Product.go_to_Products_List()
 
 class ProductUpdate(View):
@@ -42,7 +42,7 @@ def product_new_form_model(request):
 def product_new_form(request):
     form = ProductForm(data=request.POST or None, files=request.FILES or None)
     if request.method == 'POST':
-        if(form.is_bound and form.is_valid()):
+        if form.is_bound and form.is_valid():
             Product.Add(
                 Pname=form.cleaned_data['name'],
                 description=form.cleaned_data['description'],
@@ -54,17 +54,48 @@ def product_new_form(request):
             )
             return redirect('product_list')
     return render(request, 'product/newform.html', {'form': form})
+
 def product_update_form_model(request, id):
     product = Product.get_by_id(id)
     form = ProductFormModel(request.POST , request.FILES , instance=product)
     if request.method == 'POST':
-        if form.is_valid():
+        if form.is_bound and form.is_valid():
             form.save()
             return redirect('product_list')
     return render(request, 'product/updateform.html', {'form': form})
 
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Product
+from .forms import ProductForm
 
-def product_list(request):
-    return render(request, 'product/list.html', {'products': Product.getall()})
-def product_show(request, id):
-    return render(request, 'product/details.html', {'product': Product.get_by_id(id)})
+def product_update_form(request, id):
+    product = get_object_or_404(Product, id=id)
+
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            product.name = form.cleaned_data['name']
+            product.price = form.cleaned_data['price']
+            if form.cleaned_data.get('image'):
+                product.image = form.cleaned_data['image']
+            product.description = form.cleaned_data['description']
+            product.category = form.cleaned_data['category']
+            product.save()
+            return redirect('product_list')
+    else:
+        form = ProductForm(initial={
+            'name': product.name,
+            'price': product.price,
+            'description': product.description,
+            'category': product.category,
+        })
+
+    return render(request, 'product/updateform.html', {'form': form})
+
+
+
+
+# def product_list(request):
+#     return render(request, 'product/list.html', {'products': Product.getall()})
+# def product_show(request, id):
+#     return render(request, 'product/details.html', {'product': Product.get_by_id(id)})

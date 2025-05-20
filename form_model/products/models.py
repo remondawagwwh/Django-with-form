@@ -63,3 +63,7 @@ class Product(models.Model):
     @staticmethod
     def go_to_Products_List():
         return redirect('product_list')
+
+    def softdelete(self):
+        self.status = False
+        self.save()

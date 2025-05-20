@@ -25,10 +25,11 @@ class ProductForm(forms.Form):
         validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])],
         widget=forms.FileInput(attrs={'accept': 'image/jpeg,image/png'})
     )
-    category = forms.ChoiceField(
-        choices=[(cat.id, cat.name) for cat in Category.getall()],
-        widget=forms.Select()
-    )
+    # category = forms.ChoiceField(
+    #     choices=[(cat.id, cat.name) for cat in Category.getall()],
+    #     widget=forms.Select()
+    # )
+    category = forms.ChoiceField(choices=[])
 
 class ProductFormModel(forms.Form):
     class Meta:
@@ -39,6 +40,7 @@ class ProductFormModel(forms.Form):
         super().__init__(*args, **kwargs)
         # Customize widgets
         self.fields['image'].widget.attrs.update({'accept': 'image/*'})
+        self.fields['category'].choices = [(cat.id, cat.name) for cat in Category.getall()]
         self.fields['date_added'].widget = forms.DateInput(attrs={'type': 'date'})
         self.fields['date_updated'].widget = forms.DateInput(attrs={'type': 'date'})
 
