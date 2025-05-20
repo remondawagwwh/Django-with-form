@@ -11,7 +11,7 @@
         <p><strong>SKU:</strong> {{ product.sku }}</p>
         <p><strong>Category:</strong> {{ product.category.name }}</p>
         {% if product.image %}
-            <img src="{{ product.image.url }}" alt="{{ product.name }}" width="150">
+            <img src="{{ product.image.url }}" width="150"/>
         {% endif %}
     </div>
 </div>

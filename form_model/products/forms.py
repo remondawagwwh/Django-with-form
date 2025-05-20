@@ -1,5 +1,5 @@
 from django import forms
-from django.core.validators import FileExtensionValidator
+#from django.core.validators import FileExtensionValidator
 from .models import *
 class ProductForm(forms.Form):
     name= forms.CharField(required=True,max_length=200,widget=forms.TextInput(attrs={'placeholder': 'Enter product name'})
@@ -22,7 +22,6 @@ class ProductForm(forms.Form):
     image = forms.ImageField(
         label='Product Image',
         required=False,
-        validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])],
         widget=forms.FileInput(attrs={'accept': 'image/jpeg,image/png'})
     )
     category = forms.ChoiceField(
@@ -30,15 +29,18 @@ class ProductForm(forms.Form):
         widget=forms.Select()
     )
 
-class ProductFormModel(forms.Form):
+class ProductFormModel(forms.ModelForm):
     class Meta:
         model=Product
         fields='__all__'
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Customize widgets
-        self.fields['image'].widget.attrs.update({'accept': 'image/*'})
-        self.fields['date_added'].widget = forms.DateInput(attrs={'type': 'date'})
-        self.fields['date_updated'].widget = forms.DateInput(attrs={'type': 'date'})
+    class ProductFormModel(forms.ModelForm):
+        class Meta:
+            model = Product
+            fields = '__all__'
 
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.fields['image'].widget.attrs.update({'accept': 'image/*'})
+            self.fields['date_added'].widget = forms.DateInput(attrs={'type': 'date'})
+            self.fields['date_updated'].widget = forms.DateInput(attrs={'type': 'date'})

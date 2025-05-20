@@ -19,9 +19,7 @@
         <tr>
             <td>
                 {% if product.image %}
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}" width="60" height="60">
-                {% else %}
-                    No Image
+                    <img src="/media/{{ product.image }}" width="60" height="60"/>
                 {% endif %}
             </td>
             <td>{{ product.name }}</td>
@@ -29,6 +27,7 @@
             <td>{{ product.stock }}</td>
             <td>{{ product.sku }}</td>
             <td>
+                <a href="{% url 'product_update_form_model' product.id %}" class="btn btn-warning btn-sm">Edit</a>
                 <a href="{% url 'product_update_form' product.id %}" class="btn btn-warning btn-sm">Edit</a>
                 <a href="{% url 'product_delete' product.id %}" class="btn btn-danger btn-sm">Delete</a>
                 <a href="{% url 'product_details' product.id %}" class="btn btn-info btn-sm">View</a>
