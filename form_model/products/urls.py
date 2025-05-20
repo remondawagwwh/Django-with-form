@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.ProductListClass.as_view(), name='product_list'),
@@ -8,5 +10,5 @@ urlpatterns = [
     path('update/<int:id>/', views.product_update_form, name='product_update_form'),  # باستخدام Form عادي
     path('update-model/<int:id>/', views.product_update_form_model, name='product_update_form_model'),  # باستخدام ModelForm
     path('delete/<int:id>/', views.ProductDeleteClass.as_view(), name='product_delete'),
-    #path('details/<int:id>/', views.product_show, name='product_details'),
-]
+    path('details/<int:id>/', views.product_show, name='product_details'),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

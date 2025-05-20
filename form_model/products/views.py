@@ -95,7 +95,7 @@ def product_update_form(request, id):
 
 
 
-# def product_list(request):
-#     return render(request, 'product/list.html', {'products': Product.getall()})
-# def product_show(request, id):
-#     return render(request, 'product/details.html', {'product': Product.get_by_id(id)})
+def product_list(request):
+    return render(request, 'product/list.html', {'products': Product.getall()})
+def product_show(request, id):
+    return render(request, 'product/details.html', {'product': Product.get_by_id(id)})
